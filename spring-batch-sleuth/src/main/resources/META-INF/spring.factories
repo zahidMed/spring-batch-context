@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+ com.digibooster.spring.batch.sleuth.config.SleuthConfiguration
