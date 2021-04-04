@@ -59,11 +59,14 @@ public class JobExecutionMDCContextListener implements JobExecutionContextListen
 	public void restoreContext(StepExecution stepExecution) {
 		if (stepExecution.getJobExecution().getExecutionContext().containsKey(MDC_PARAM_NAME)) {
 			log.debug("Restore the MDC context");
-			HashMap mdc = (HashMap) stepExecution.getJobExecution().getExecutionContext().get(MDC_PARAM_NAME);
+			HashMap<String,String> mdc = (HashMap) stepExecution.getJobExecution().getExecutionContext().get(MDC_PARAM_NAME);
 			Map originalMdc = MDC.getMDCAdapter().getCopyOfContextMap();
 			ORIGINAL_CONTEXT.set(originalMdc);
 			MDC.clear();
-			mdc.forEach((key, val) -> MDC.put((String) key, (String) val));
+			for(Map.Entry<String,String> entry:mdc.entrySet()) {
+				MDC.put(entry.getKey(), entry.getValue());
+			}
+			
 		} else {
 			log.error("Could not find key {} in the job execution context", MDC_PARAM_NAME);
 		}
