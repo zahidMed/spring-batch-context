@@ -11,6 +11,11 @@ import org.slf4j.LoggerFactory;
 import com.digibooster.spring.batch.listener.JobExecutionContextListener;
 import com.digibooster.spring.batch.util.CustomJobParameter;
 
+/**
+ * This class restores the Locale context inside the Spring batch job
+ * @author Mohammed ZAHID <zahid.med@gmail.com>
+ *
+ */
 public class JobExecutionLocaleContextListener implements JobExecutionContextListener {
 
 	private final Logger log = LoggerFactory.getLogger(JobExecutionLocaleContextListener.class);
