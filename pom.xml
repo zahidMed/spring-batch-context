@@ -28,6 +28,7 @@
 		<module>spring-batch-security</module>
 		<module>spring-batch-sleuth</module>
 		<module>spring-batch-mdc</module>
+		<module>spring-batch-locale</module>
 	</modules>
 
 	<dependencyManagement>

@@ -9,9 +9,8 @@ import org.slf4j.MDC;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.StepExecution;
-
 import com.digibooster.spring.batch.listener.JobExecutionContextListener;
-import com.digibooster.spring.batch.util.SerializationUtils;
+import com.digibooster.spring.batch.util.CustomJobParameter;
 
 /**
  * This class restores MDC stored information context inside the Spring batch job
@@ -31,7 +30,7 @@ public class JobExecutionMDCContextListener implements JobExecutionContextListen
 		log.debug("Insert the MDC values");
 		Map mdc = MDC.getCopyOfContextMap();
 		if (mdc != null) {
-			jobParametersBuilder.addString(MDC_PARAM_NAME, SerializationUtils.serialize(new HashMap(mdc)));
+			jobParametersBuilder.addParameter(MDC_PARAM_NAME, new CustomJobParameter<HashMap>(new HashMap(mdc)));
 		}
 
 	}
@@ -39,10 +38,9 @@ public class JobExecutionMDCContextListener implements JobExecutionContextListen
 	@Override
 	public void fillJobExecutionContext(JobExecution jobExecution) {
 		log.debug("Restore the MC context");
-		String mdcValue = jobExecution.getJobParameters().getString(MDC_PARAM_NAME);
-		if (mdcValue != null) {
-			HashMap mdc = SerializationUtils.deserialize(mdcValue, HashMap.class);
-			jobExecution.getExecutionContext().put(MDC_PARAM_NAME, mdc);
+		CustomJobParameter<HashMap> mdc = (CustomJobParameter<HashMap>) jobExecution.getJobParameters().getParameters().get(MDC_PARAM_NAME);
+		if (mdc != null) {
+			jobExecution.getExecutionContext().put(MDC_PARAM_NAME, (HashMap)mdc.getValue());
 		} else {
 			log.error("Could not find parameter {} in order to restore the MDC context", MDC_PARAM_NAME);
 		}
