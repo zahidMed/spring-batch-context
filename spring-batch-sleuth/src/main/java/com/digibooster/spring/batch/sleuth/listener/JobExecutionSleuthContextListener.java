@@ -10,7 +10,7 @@ import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import com.digibooster.spring.batch.listener.JobExecutionContextListener;
 import com.digibooster.spring.batch.sleuth.SpanInfoHolder;
-import com.digibooster.spring.batch.util.SerializationUtils;
+import com.digibooster.spring.batch.util.CustomJobParameter;
 
 /**
  * This class restores sleuth context inside the Spring batch job
@@ -46,16 +46,16 @@ public class JobExecutionSleuthContextListener implements JobExecutionContextLis
 		 infoHolder.setTags(currentSpan.tags());
 		 infoHolder.setProcessId(currentSpan.getProcessId());
 		 infoHolder.setBaggage(currentSpan.getBaggage());
-		 jobParametersBuilder.addString(SLEUTH_PARAM_NAME, SerializationUtils.serialize(infoHolder));
+		 jobParametersBuilder.addParameter(SLEUTH_PARAM_NAME,  new CustomJobParameter<SpanInfoHolder>(infoHolder));
 	}
 
 
 	@Override
 	public void fillJobExecutionContext(JobExecution jobExecution) {
 		log.debug("Restore the scurity context");
-		String authValue=jobExecution.getJobParameters().getString(SLEUTH_PARAM_NAME);
-		if(authValue!=null) {
-			SpanInfoHolder infoHolder = SerializationUtils.deserialize(authValue, SpanInfoHolder.class);
+		CustomJobParameter<SpanInfoHolder> spanParameter= (CustomJobParameter<SpanInfoHolder>) jobExecution.getJobParameters().getParameters().get(SLEUTH_PARAM_NAME);
+		if(spanParameter!=null) {
+			SpanInfoHolder infoHolder = (SpanInfoHolder)spanParameter.getValue();
 			Span newSpan= Span
 					.builder()
 					.name(infoHolder.getName())

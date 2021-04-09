@@ -8,6 +8,11 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.util.CollectionUtils;
 
+/**
+ * Listener that call the registered {@link JobExecutionContextListener} before and after running the batch steps.
+ * @author Mohammed ZAHID <zahid.med@gmail.com>
+ *
+ */
 public class StepExecutionListenerContextSupport implements StepExecutionListener{
 
 	

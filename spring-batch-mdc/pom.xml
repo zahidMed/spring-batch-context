@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>com.digibooster.spring.batch</groupId>
 			<artifactId>spring-batch-context-commons</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>

@@ -1,11 +1,14 @@
 package com.digibooster.spring.batch.aop;
 
-import java.io.Serializable;
-
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
+import org.springframework.aop.framework.AopProxy;
+import org.springframework.aop.framework.DefaultAopProxyFactory;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -13,14 +16,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.stereotype.Component;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
@@ -28,40 +24,67 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
-import com.digibooster.spring.batch.config.JobExecutionContextListenerTest;
 import com.digibooster.spring.batch.config.TestConfiguration;
-import com.digibooster.spring.batch.config.TestContextValue;
-import com.digibooster.spring.batch.listener.JobExecutionContextListener;
 
 
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
-//@SpringBatchTest
-//@EnableAutoConfiguration
-//@ContextConfiguration(classes = { TestConfiguration.class })
-//@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, 
-//  DirtiesContextTestExecutionListener.class})
-//@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
-//@TestPropertySource(locations = "classpath:application.properties")
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = { TestConfiguration.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, 
+  DirtiesContextTestExecutionListener.class})
+@TestPropertySource(locations = "classpath:application.properties")
 public class JobExecutionAspectTest {
-
-	@Autowired
-	JobLauncher jobLauncher;
+	
+	JobLauncher aspectJobLauncher;
+	
+	TestJobLauncher jobLauncher =new TestJobLauncher();
 	
 	@Autowired
-	JobExecutionContextListenerTest contextListenerTest;
+	JobExecutionAspect jobExecutionAspect;
 	
-	@Autowired
-	Job job;
-
 	
-	//@Test
-	public void test() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException, InterruptedException{
-		contextListenerTest.setInputValue(new TestContextValue("test value",10));
-		jobLauncher.run(job, new JobParametersBuilder().toJobParameters());
-		Thread.sleep(20000);
-		Assert.assertEquals(new TestContextValue("test value",10), contextListenerTest.getOutputValue());
+	@Before
+    public void setUp() {
 		
+        AspectJProxyFactory aspectJProxyFactory = new AspectJProxyFactory(jobLauncher);
+        aspectJProxyFactory.addAspect(jobExecutionAspect);
+
+        DefaultAopProxyFactory proxyFactory = new DefaultAopProxyFactory();
+        AopProxy aopProxy = proxyFactory.createAopProxy(aspectJProxyFactory);
+
+        aspectJobLauncher = (JobLauncher) aopProxy.getProxy();
+    }
+
+	
+	@Test
+	public void testBeforeRun() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException, InterruptedException{
+		JobParametersBuilder expectedParametersBuilder= new JobParametersBuilder();
+		expectedParametersBuilder.addString("originalParam", "originalParam");
+		expectedParametersBuilder.addString("Param1", "textParam1");
+		expectedParametersBuilder.addLong("Param2", 12L);
+		
+		JobParametersBuilder jobParametersBuilder= new JobParametersBuilder();
+		jobParametersBuilder.addString("originalParam", "originalParam");
+		aspectJobLauncher.run(null, jobParametersBuilder.toJobParameters());
+		
+		Assert.assertEquals(expectedParametersBuilder.toJobParameters(), jobLauncher.getJobParameters());
+	}
+	
+	
+	
+	public static class TestJobLauncher implements JobLauncher{
+		
+		private JobParameters jobParameters;
+		
+		public JobParameters getJobParameters() {
+			return jobParameters;
+		}
+
+		@Override
+		public JobExecution run(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException,
+				JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+			this.jobParameters=jobParameters;
+			return null;
+		}
 	}
 
 }

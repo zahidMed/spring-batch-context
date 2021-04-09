@@ -17,6 +17,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-sleuth-core</artifactId>
+			<version>${spring-cloud-sleuth.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -25,7 +26,7 @@
 		<dependency>
 			<groupId>com.digibooster.spring.batch</groupId>
 			<artifactId>spring-batch-context-commons</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

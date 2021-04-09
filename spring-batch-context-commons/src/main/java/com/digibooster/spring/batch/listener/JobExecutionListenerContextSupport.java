@@ -8,7 +8,7 @@ import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.util.CollectionUtils;
 
 /**
- * Listener that call all the registered {@link JobExecutionContextListener} before and after running the job.
+ * Listener that call the registered {@link JobExecutionContextListener} before and after running the batch jobs.
  * @author Mohammed ZAHID <zahid.med@gmail.com>
  *
  */

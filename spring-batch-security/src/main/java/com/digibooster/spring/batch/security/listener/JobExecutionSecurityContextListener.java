@@ -3,7 +3,6 @@ package com.digibooster.spring.batch.security.listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -12,7 +11,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 
 import com.digibooster.spring.batch.listener.JobExecutionContextListener;
-import com.digibooster.spring.batch.util.SerializationUtils;
+import com.digibooster.spring.batch.util.CustomJobParameter;
 
 /**
  * This class restores spring-security context inside the Spring batch job
@@ -33,17 +32,16 @@ public class JobExecutionSecurityContextListener implements JobExecutionContextL
 		SecurityContext securityContext= SecurityContextHolder.getContext();
 		Authentication authentication= securityContext.getAuthentication();
 		if(authentication!=null) {
-			jobParametersBuilder.addString(SECURITY_PARAM_NAME, SerializationUtils.serialize(authentication));
+			jobParametersBuilder.addParameter(SECURITY_PARAM_NAME, new CustomJobParameter<Authentication>(authentication));
 		}
 	}
 
 	@Override
 	public void fillJobExecutionContext(JobExecution jobExecution) {
 		log.debug("Restore the scurity context");
-		String authValue=jobExecution.getJobParameters().getString(SECURITY_PARAM_NAME);
-		if(authValue!=null) {
-			Authentication authentication = SerializationUtils.deserialize(authValue, Authentication.class);
-			jobExecution.getExecutionContext().put(SECURITY_PARAM_NAME,authentication);
+		CustomJobParameter<Authentication> authentication=(CustomJobParameter<Authentication>) jobExecution.getJobParameters().getParameters().get(SECURITY_PARAM_NAME);
+		if(authentication!=null) {
+			jobExecution.getExecutionContext().put(SECURITY_PARAM_NAME,(Authentication)authentication.getValue());
 		}
 		else {
 			log.error("Could not find parameter {} in order to restore the security context",SECURITY_PARAM_NAME);
