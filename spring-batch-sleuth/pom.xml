@@ -5,13 +5,17 @@
 	<parent>
 		<groupId>com.digibooster.spring.batch</groupId>
 		<artifactId>spring-batch-context</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<artifactId>spring-batch-sleuth</artifactId>
 	<name>Spring Batch Sleuth</name>
 	<description>
 	</description>
+
+	<properties>
+		<spring-cloud-sleuth.version>1.3.0.RELEASE</spring-cloud-sleuth.version>
+	</properties>
 
 	<dependencies>
 		<dependency>

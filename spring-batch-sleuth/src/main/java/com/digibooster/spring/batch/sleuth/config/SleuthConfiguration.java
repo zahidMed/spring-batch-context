@@ -10,9 +10,9 @@ import com.digibooster.spring.batch.sleuth.listener.JobExecutionSleuthContextLis
 
 @Configuration
 public class SleuthConfiguration {
-	
+
 	@Bean
-	public JobExecutionContextListener jobExecutionMDCContextListener(@Autowired Tracer tracer) {
+	public JobExecutionContextListener jobExecutionSleuthContextListener(@Autowired Tracer tracer) {
 		return new JobExecutionSleuthContextListener(tracer);
 	}
 

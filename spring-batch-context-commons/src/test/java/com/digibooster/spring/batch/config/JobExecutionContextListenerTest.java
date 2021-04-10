@@ -25,25 +25,25 @@ public class JobExecutionContextListenerTest implements JobExecutionContextListe
 	@Override
 	public void fillJobExecutionContext(JobExecution jobExecution) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeFromJobExecutionContext(JobExecution jobExecution) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void restoreContext(StepExecution stepExecution) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void clearContext(StepExecution stepExecution) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

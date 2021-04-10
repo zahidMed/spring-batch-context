@@ -8,9 +8,9 @@ import com.digibooster.spring.batch.security.listener.JobExecutionSecurityContex
 
 @Configuration
 public class SpringSecurityConfiguration {
-	
+
 	@Bean
-	public JobExecutionContextListener jobExecutionMDCContextListener() {
+	public JobExecutionContextListener jobExecutionSecurityContextListener() {
 		return new JobExecutionSecurityContextListener();
 	}
 

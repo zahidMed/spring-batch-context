@@ -9,10 +9,11 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.digibooster.spring.batch.listener.JobExecutionContextListener;
-import com.digibooster.spring.batch.util.CustomJobParameter;
+import com.digibooster.spring.batch.util.SerializableJobParameter;
 
 /**
  * This class restores the Locale context inside the Spring batch job
+ * 
  * @author Mohammed ZAHID <zahid.med@gmail.com>
  *
  */
@@ -27,17 +28,18 @@ public class JobExecutionLocaleContextListener implements JobExecutionContextLis
 	@Override
 	public void insertContextInfo(JobParametersBuilder jobParametersBuilder) {
 		log.debug("Insert the Locale values");
-		Locale locale= LocaleContextHolder.getLocale();
-		jobParametersBuilder.addParameter(LOCALE_PARAM_NAME, new CustomJobParameter<Locale>(locale));
+		Locale locale = LocaleContextHolder.getLocale();
+		jobParametersBuilder.addParameter(LOCALE_PARAM_NAME, new SerializableJobParameter<Locale>(locale));
 
 	}
 
 	@Override
 	public void fillJobExecutionContext(JobExecution jobExecution) {
 		log.debug("Restore the locale context");
-		CustomJobParameter<Locale> locale = (CustomJobParameter<Locale>) jobExecution.getJobParameters().getParameters().get(LOCALE_PARAM_NAME);
+		SerializableJobParameter<Locale> locale = (SerializableJobParameter<Locale>) jobExecution.getJobParameters()
+				.getParameters().get(LOCALE_PARAM_NAME);
 		if (locale != null) {
-			jobExecution.getExecutionContext().put(LOCALE_PARAM_NAME, (Locale)locale.getValue());
+			jobExecution.getExecutionContext().put(LOCALE_PARAM_NAME, (Locale) locale.getValue());
 		} else {
 			log.error("Could not find parameter {} in order to restore the locale context", LOCALE_PARAM_NAME);
 		}
@@ -57,8 +59,8 @@ public class JobExecutionLocaleContextListener implements JobExecutionContextLis
 			Locale locale = (Locale) stepExecution.getJobExecution().getExecutionContext().get(LOCALE_PARAM_NAME);
 			Locale originalLocale = LocaleContextHolder.getLocale();
 			ORIGINAL_CONTEXT.set(originalLocale);
-			LocaleContextHolder.setLocale(locale,true);
-			
+			LocaleContextHolder.setLocale(locale, true);
+
 		} else {
 			log.error("Could not find key {} in the job execution context", LOCALE_PARAM_NAME);
 		}

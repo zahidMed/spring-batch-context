@@ -8,7 +8,7 @@ import com.digibooster.spring.batch.mdc.listener.JobExecutionMDCContextListener;
 
 @Configuration
 public class MDCConfiguration {
-	
+
 	@Bean
 	public JobExecutionContextListener jobExecutionMDCContextListener() {
 		return new JobExecutionMDCContextListener();

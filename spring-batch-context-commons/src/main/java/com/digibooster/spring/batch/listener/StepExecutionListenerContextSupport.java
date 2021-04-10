@@ -9,36 +9,36 @@ import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.util.CollectionUtils;
 
 /**
- * Listener that call the registered {@link JobExecutionContextListener} before and after running the batch steps.
+ * Listener that call the registered {@link JobExecutionContextListener} before
+ * and after running the batch steps.
+ * 
  * @author Mohammed ZAHID <zahid.med@gmail.com>
  *
  */
-public class StepExecutionListenerContextSupport implements StepExecutionListener{
+public class StepExecutionListenerContextSupport implements StepExecutionListener {
 
-	
-protected List<JobExecutionContextListener> jobExecutionContextListeners;
-	
-	public StepExecutionListenerContextSupport(List<JobExecutionContextListener> jobExecutionContextListeners){
-		this.jobExecutionContextListeners= jobExecutionContextListeners;
+	protected List<JobExecutionContextListener> jobExecutionContextListeners;
+
+	public StepExecutionListenerContextSupport(List<JobExecutionContextListener> jobExecutionContextListeners) {
+		this.jobExecutionContextListeners = jobExecutionContextListeners;
 	}
-	
-	
+
 	@Override
 	public void beforeStep(StepExecution stepExecution) {
-		if(!CollectionUtils.isEmpty(jobExecutionContextListeners)){
-			Iterator<JobExecutionContextListener> iter= jobExecutionContextListeners.iterator();
-			while(iter.hasNext()){
+		if (!CollectionUtils.isEmpty(jobExecutionContextListeners)) {
+			Iterator<JobExecutionContextListener> iter = jobExecutionContextListeners.iterator();
+			while (iter.hasNext()) {
 				iter.next().restoreContext(stepExecution);
 			}
 		}
-		
+
 	}
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
-		if(!CollectionUtils.isEmpty(jobExecutionContextListeners)){
-			Iterator<JobExecutionContextListener> iter= jobExecutionContextListeners.iterator();
-			while(iter.hasNext()){
+		if (!CollectionUtils.isEmpty(jobExecutionContextListeners)) {
+			Iterator<JobExecutionContextListener> iter = jobExecutionContextListeners.iterator();
+			while (iter.hasNext()) {
 				iter.next().clearContext(stepExecution);
 			}
 		}
