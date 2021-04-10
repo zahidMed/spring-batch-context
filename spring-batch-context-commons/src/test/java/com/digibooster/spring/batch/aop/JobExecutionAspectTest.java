@@ -26,55 +26,50 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 
 import com.digibooster.spring.batch.config.TestConfiguration;
 
-
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { TestConfiguration.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, 
-  DirtiesContextTestExecutionListener.class})
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class })
 @TestPropertySource(locations = "classpath:application.properties")
 public class JobExecutionAspectTest {
-	
+
 	JobLauncher aspectJobLauncher;
-	
-	TestJobLauncher jobLauncher =new TestJobLauncher();
-	
+
+	TestJobLauncher jobLauncher = new TestJobLauncher();
+
 	@Autowired
 	JobExecutionAspect jobExecutionAspect;
-	
-	
+
 	@Before
-    public void setUp() {
-		
-        AspectJProxyFactory aspectJProxyFactory = new AspectJProxyFactory(jobLauncher);
-        aspectJProxyFactory.addAspect(jobExecutionAspect);
+	public void setUp() {
 
-        DefaultAopProxyFactory proxyFactory = new DefaultAopProxyFactory();
-        AopProxy aopProxy = proxyFactory.createAopProxy(aspectJProxyFactory);
+		AspectJProxyFactory aspectJProxyFactory = new AspectJProxyFactory(jobLauncher);
+		aspectJProxyFactory.addAspect(jobExecutionAspect);
 
-        aspectJobLauncher = (JobLauncher) aopProxy.getProxy();
-    }
+		DefaultAopProxyFactory proxyFactory = new DefaultAopProxyFactory();
+		AopProxy aopProxy = proxyFactory.createAopProxy(aspectJProxyFactory);
 
-	
+		aspectJobLauncher = (JobLauncher) aopProxy.getProxy();
+	}
+
 	@Test
-	public void testBeforeRun() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException, InterruptedException{
-		JobParametersBuilder expectedParametersBuilder= new JobParametersBuilder();
+	public void testBeforeRun() throws JobExecutionAlreadyRunningException, JobRestartException,
+			JobInstanceAlreadyCompleteException, JobParametersInvalidException, InterruptedException {
+		JobParametersBuilder expectedParametersBuilder = new JobParametersBuilder();
 		expectedParametersBuilder.addString("originalParam", "originalParam");
 		expectedParametersBuilder.addString("Param1", "textParam1");
 		expectedParametersBuilder.addLong("Param2", 12L);
-		
-		JobParametersBuilder jobParametersBuilder= new JobParametersBuilder();
+
+		JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
 		jobParametersBuilder.addString("originalParam", "originalParam");
 		aspectJobLauncher.run(null, jobParametersBuilder.toJobParameters());
-		
+
 		Assert.assertEquals(expectedParametersBuilder.toJobParameters(), jobLauncher.getJobParameters());
 	}
-	
-	
-	
-	public static class TestJobLauncher implements JobLauncher{
-		
+
+	public static class TestJobLauncher implements JobLauncher {
+
 		private JobParameters jobParameters;
-		
+
 		public JobParameters getJobParameters() {
 			return jobParameters;
 		}
@@ -82,7 +77,7 @@ public class JobExecutionAspectTest {
 		@Override
 		public JobExecution run(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException,
 				JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
-			this.jobParameters=jobParameters;
+			this.jobParameters = jobParameters;
 			return null;
 		}
 	}

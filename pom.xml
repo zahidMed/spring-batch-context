@@ -5,7 +5,7 @@
 	<groupId>com.digibooster.spring.batch</groupId>
 	<artifactId>spring-batch-context</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<description>Framework that allows the access to the spring batch context in order 
 	to propagate other frameworks contexts like spring security,sleuth ....
 	</description>
@@ -14,13 +14,12 @@
 
 		<spring-batch.version>4.0.0.RELEASE</spring-batch.version>
 		<spring-framework.version>5.0.0.RELEASE</spring-framework.version>
-		<spring-cloud-sleuth.version>1.3.0.RELEASE</spring-cloud-sleuth.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<aspectjweaver.version>1.8.9</aspectjweaver.version>
 		<junit.version>4.12</junit.version>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<java.version>1.8</java.version>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<java.version>1.7</java.version>
 	</properties>
 
 	<modules>

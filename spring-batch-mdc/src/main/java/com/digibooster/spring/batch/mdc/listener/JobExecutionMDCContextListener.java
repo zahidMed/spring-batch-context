@@ -10,10 +10,12 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.StepExecution;
 import com.digibooster.spring.batch.listener.JobExecutionContextListener;
-import com.digibooster.spring.batch.util.CustomJobParameter;
+import com.digibooster.spring.batch.util.SerializableJobParameter;
 
 /**
- * This class restores MDC stored information context inside the Spring batch job
+ * This class restores MDC stored information context inside the Spring batch
+ * job
+ * 
  * @author Mohammed ZAHID <zahid.med@gmail.com>
  *
  */
@@ -30,7 +32,7 @@ public class JobExecutionMDCContextListener implements JobExecutionContextListen
 		log.debug("Insert the MDC values");
 		Map mdc = MDC.getCopyOfContextMap();
 		if (mdc != null) {
-			jobParametersBuilder.addParameter(MDC_PARAM_NAME, new CustomJobParameter<HashMap>(new HashMap(mdc)));
+			jobParametersBuilder.addParameter(MDC_PARAM_NAME, new SerializableJobParameter<HashMap>(new HashMap(mdc)));
 		}
 
 	}
@@ -38,9 +40,10 @@ public class JobExecutionMDCContextListener implements JobExecutionContextListen
 	@Override
 	public void fillJobExecutionContext(JobExecution jobExecution) {
 		log.debug("Restore the MC context");
-		CustomJobParameter<HashMap> mdc = (CustomJobParameter<HashMap>) jobExecution.getJobParameters().getParameters().get(MDC_PARAM_NAME);
+		SerializableJobParameter<HashMap> mdc = (SerializableJobParameter<HashMap>) jobExecution.getJobParameters()
+				.getParameters().get(MDC_PARAM_NAME);
 		if (mdc != null) {
-			jobExecution.getExecutionContext().put(MDC_PARAM_NAME, (HashMap)mdc.getValue());
+			jobExecution.getExecutionContext().put(MDC_PARAM_NAME, (HashMap) mdc.getValue());
 		} else {
 			log.error("Could not find parameter {} in order to restore the MDC context", MDC_PARAM_NAME);
 		}
@@ -57,14 +60,15 @@ public class JobExecutionMDCContextListener implements JobExecutionContextListen
 	public void restoreContext(StepExecution stepExecution) {
 		if (stepExecution.getJobExecution().getExecutionContext().containsKey(MDC_PARAM_NAME)) {
 			log.debug("Restore the MDC context");
-			HashMap<String,String> mdc = (HashMap) stepExecution.getJobExecution().getExecutionContext().get(MDC_PARAM_NAME);
+			HashMap<String, String> mdc = (HashMap) stepExecution.getJobExecution().getExecutionContext()
+					.get(MDC_PARAM_NAME);
 			Map originalMdc = MDC.getMDCAdapter().getCopyOfContextMap();
 			ORIGINAL_CONTEXT.set(originalMdc);
 			MDC.clear();
-			for(Map.Entry<String,String> entry:mdc.entrySet()) {
+			for (Map.Entry<String, String> entry : mdc.entrySet()) {
 				MDC.put(entry.getKey(), entry.getValue());
 			}
-			
+
 		} else {
 			log.error("Could not find key {} in the job execution context", MDC_PARAM_NAME);
 		}
