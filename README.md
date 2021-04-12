@@ -18,7 +18,7 @@ This module is used to propagate the spring security context throw the batch Ite
 ### Usage
 ```xml
 <dependency>
-	<groupId>com.digibooster.spring.batch</groupId>
+	<groupId>org.digibooster.spring.batch</groupId>
 	<artifactId>spring-batch-security</artifactId>
 	<version>1.0.0</version>
 </dependency>
@@ -29,7 +29,7 @@ This module is used to propagate values stored in Slf4j's MDC context throw the 
 ##### Usage
 ```xml
 <dependency>
-	<groupId>com.digibooster.spring.batch</groupId>
+	<groupId>org.digibooster.spring.batch</groupId>
 	<artifactId>spring-batch-mdc</artifactId>
 	<version>1.0.0</version>
 </dependency>
@@ -40,7 +40,7 @@ This module is used to propagate sleuth Span informations throw the batch Items
 ##### Usage
 ```xml
 <dependency>
-	<groupId>com.digibooster.spring.batch</groupId>
+	<groupId>org.digibooster.spring.batch</groupId>
 	<artifactId>spring-batch-sleuth</artifactId>
 	<version>1.0.0</version>
 </dependency>
@@ -51,7 +51,7 @@ This module is used to propagate the locale context throw the batch Items
 ##### Usage
 ```xml
 <dependency>
-	<groupId>com.digibooster.spring.batch</groupId>
+	<groupId>org.digibooster.spring.batch</groupId>
 	<artifactId>spring-batch-locale</artifactId>
 	<version>1.0.0</version>
 </dependency>
