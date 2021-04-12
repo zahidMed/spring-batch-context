@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- com.digibooster.spring.batch.mdc.config.MDCConfiguration
+ org.digibooster.spring.batch.mdc.config.MDCConfiguration
