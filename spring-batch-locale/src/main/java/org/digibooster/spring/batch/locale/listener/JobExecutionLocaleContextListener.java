@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class restores the Locale context inside the Spring batch job
  * 
- * @author Mohammed ZAHID <zahid.med@gmail.com>
+ * @author Mohammed ZAHID {@literal <}zahid.med@gmail.com{@literal >}
  *
  */
 public class JobExecutionLocaleContextListener implements JobExecutionContextListener {

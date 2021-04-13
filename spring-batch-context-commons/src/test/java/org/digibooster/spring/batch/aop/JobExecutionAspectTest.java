@@ -1,6 +1,5 @@
 package org.digibooster.spring.batch.aop;
 
-import org.digibooster.spring.batch.aop.JobExecutionAspect;
 import org.digibooster.spring.batch.config.TestConfiguration;
 import org.junit.Assert;
 import org.junit.Before;

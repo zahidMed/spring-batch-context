@@ -16,6 +16,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
+/**
+ * Job configuration.
+ * 
+ * @author Mohammed ZAHID {@literal <}zahid.med@gmail.com{@literal >}
+ *
+ */
 @Configuration
 @ComponentScan(basePackages = { "org.digibooster.spring.batch.aop" })
 @EnableAspectJAutoProxy

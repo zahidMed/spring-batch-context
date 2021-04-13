@@ -19,7 +19,7 @@ import org.digibooster.spring.batch.listener.JobExecutionContextListener;
  * {@link JobExecutionContextListener} to insert the parameters they need for
  * restoring their contexts.
  * 
- * @author Mohammed ZAHID <zahid.med@gmail.com>
+ * @author Mohammed ZAHID {@literal <}zahid.med@gmail.com{@literal >}
  *
  */
 @Aspect

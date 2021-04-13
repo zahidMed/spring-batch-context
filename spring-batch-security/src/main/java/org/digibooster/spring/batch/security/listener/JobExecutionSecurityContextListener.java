@@ -15,7 +15,7 @@ import org.springframework.batch.core.StepExecution;
 /**
  * This class restores spring-security context inside the Spring batch job
  * 
- * @author Mohammed ZAHID <zahid.med@gmail.com>
+ * @author Mohammed ZAHID {@literal <}zahid.med@gmail.com{@literal >}
  *
  */
 public class JobExecutionSecurityContextListener implements JobExecutionContextListener {

@@ -16,7 +16,7 @@ import org.springframework.batch.core.StepExecution;
  * This class restores MDC stored information context inside the Spring batch
  * job
  * 
- * @author Mohammed ZAHID <zahid.med@gmail.com>
+ * @author Mohammed ZAHID {@literal <}zahid.med@gmail.com{@literal >}
  *
  */
 public class JobExecutionMDCContextListener implements JobExecutionContextListener {
