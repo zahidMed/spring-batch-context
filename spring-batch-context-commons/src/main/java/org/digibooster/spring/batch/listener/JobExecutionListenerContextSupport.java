@@ -11,7 +11,7 @@ import org.springframework.util.CollectionUtils;
  * Listener that call the registered {@link JobExecutionContextListener} before
  * and after running the batch jobs.
  * 
- * @author Mohammed ZAHID <zahid.med@gmail.com>
+ * @author Mohammed ZAHID {@literal <}zahid.med@gmail.com{@literal >}
  *
  */
 public class JobExecutionListenerContextSupport implements JobExecutionListener {

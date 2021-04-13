@@ -9,7 +9,7 @@ import org.springframework.batch.core.StepExecution;
  * Allow the restoring the context of the thread that runs the job inside the
  * job it self.
  * 
- * @author Mohammed ZAHID <zahid.med@gmail.com>
+ * @author Mohammed ZAHID {@literal <}zahid.med@gmail.com{@literal >}
  *
  */
 public interface JobExecutionContextListener {

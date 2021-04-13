@@ -11,7 +11,7 @@ import org.springframework.cloud.sleuth.Span;
  * Sleuth information holder that is used to store values from the current Span
  * 
  * @see Span
- * @author Mohammed ZAHID <zahid.med@gmail.com>
+ * @author Mohammed ZAHID {@literal <}zahid.med@gmail.com{@literal >}
  */
 public class SpanInfoHolder implements Serializable {
 
