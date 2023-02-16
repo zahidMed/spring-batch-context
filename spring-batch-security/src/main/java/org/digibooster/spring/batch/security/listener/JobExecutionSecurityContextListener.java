@@ -5,12 +5,14 @@ import org.digibooster.spring.batch.util.SerializableJobParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.StepExecution;
+
+import java.util.Map;
 
 /**
  * This class restores spring-security context inside the Spring batch job
@@ -22,9 +24,9 @@ public class JobExecutionSecurityContextListener implements JobExecutionContextL
 
 	private final Logger log = LoggerFactory.getLogger(JobExecutionSecurityContextListener.class);
 
-	private static final String SECURITY_PARAM_NAME = "security-param";
+	public static final String SECURITY_PARAM_NAME = "security-param";
 
-	private static final ThreadLocal<Authentication> ORIGINAL_CONTEXT = new ThreadLocal<>();
+	protected static final ThreadLocal<Authentication> ORIGINAL_CONTEXT = new ThreadLocal<>();
 
 	@Override
 	public void insertContextInfo(JobParametersBuilder jobParametersBuilder) {
@@ -33,46 +35,32 @@ public class JobExecutionSecurityContextListener implements JobExecutionContextL
 		Authentication authentication = securityContext.getAuthentication();
 		if (authentication != null) {
 			jobParametersBuilder.addParameter(SECURITY_PARAM_NAME,
-					new SerializableJobParameter<Authentication>(authentication));
+					new SerializableJobParameter(authentication));
 		}
 	}
 
 	@Override
-	public void fillJobExecutionContext(JobExecution jobExecution) {
-		log.debug("Restore the scurity context");
-		SerializableJobParameter<Authentication> authentication = (SerializableJobParameter<Authentication>) jobExecution
-				.getJobParameters().getParameters().get(SECURITY_PARAM_NAME);
-		if (authentication != null) {
-			jobExecution.getExecutionContext().put(SECURITY_PARAM_NAME, (Authentication) authentication.getValue());
-		} else {
+	public void restoreContext(JobExecution jobExecution) {
+		restoreContext(jobExecution.getJobParameters().getParameters(),true);
+	}
+
+	protected void restoreContext(Map<String, JobParameter> parameters, boolean keepCurrentContext){
+		if (!parameters.containsKey(SECURITY_PARAM_NAME)) {
 			log.error("Could not find parameter {} in order to restore the security context", SECURITY_PARAM_NAME);
+			return;
 		}
-
-	}
-
-	@Override
-	public void removeFromJobExecutionContext(JobExecution jobExecution) {
-		jobExecution.getExecutionContext().remove(SECURITY_PARAM_NAME);
-
-	}
-
-	@Override
-	public void restoreContext(StepExecution stepExecution) {
-		if (stepExecution.getJobExecution().getExecutionContext().containsKey(SECURITY_PARAM_NAME)) {
-			log.debug("Restore the security context");
-			Authentication authentication = (Authentication) stepExecution.getJobExecution().getExecutionContext()
-					.get(SECURITY_PARAM_NAME);
-			SecurityContext securityContext = SecurityContextHolder.getContext();
+		SerializableJobParameter<Authentication> authentication = (SerializableJobParameter<Authentication>) parameters.get(SECURITY_PARAM_NAME);
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		if(keepCurrentContext) {
 			ORIGINAL_CONTEXT.set(securityContext.getAuthentication());
-			securityContext.setAuthentication(authentication);
-		} else {
-			log.error("Could not find key {} in the job execution context", SECURITY_PARAM_NAME);
 		}
+		securityContext.setAuthentication(authentication.getValue());
+
 	}
 
 	@Override
-	public void clearContext(StepExecution stepExecution) {
-		log.debug("Clear the security context");
+	public void clearContext(JobExecution jobExecution) {
+		log.debug("Clear the security context from Job: {}", jobExecution.getJobInstance().getJobName());
 		SecurityContextHolder.clearContext();
 		Authentication originalAuth = ORIGINAL_CONTEXT.get();
 		if (originalAuth != null) {

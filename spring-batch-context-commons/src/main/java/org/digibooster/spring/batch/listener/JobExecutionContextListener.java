@@ -3,11 +3,10 @@ package org.digibooster.spring.batch.listener;
 import org.digibooster.spring.batch.aop.JobExecutionAspect;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.StepExecution;
 
 /**
  * Allow the restoring the context of the thread that runs the job inside the
- * job it self.
+ * job itself.
  * 
  * @author Mohammed ZAHID {@literal <}zahid.med@gmail.com{@literal >}
  *
@@ -15,7 +14,7 @@ import org.springframework.batch.core.StepExecution;
 public interface JobExecutionContextListener {
 
 	/**
-	 * Serializes the current context information and puts it in the the job
+	 * Serializes the current context information and inserts it as a job
 	 * parameter. This method called by the Aspect {@link JobExecutionAspect}
 	 * 
 	 * @param jobParametersBuilder
@@ -23,38 +22,17 @@ public interface JobExecutionContextListener {
 	void insertContextInfo(JobParametersBuilder jobParametersBuilder);
 
 	/**
-	 * Deserializes the context information from the job parameters and inserts it
-	 * in the Job execution context. This method is called by the Job listener
-	 * {@link JobExecutionListenerContextSupport}
-	 * 
+	 * Restores the context information inside the Job thread.
+	 * This method is called by the Job listener.
 	 * @param jobExecution
 	 */
-	void fillJobExecutionContext(JobExecution jobExecution);
+	void restoreContext(JobExecution jobExecution);
+
 
 	/**
-	 * Removes the context information from job execution context when the job ends
-	 * This method is called by the Job listener
-	 * {@link JobExecutionListenerContextSupport}
-	 * 
+	 * Removes the context information when the job ends and restore the previous one.
 	 * @param jobExecution
 	 */
-	void removeFromJobExecutionContext(JobExecution jobExecution);
-
-	/**
-	 * Restore the context information from the job execution context before each
-	 * step This method is called by the Step listener
-	 * {@link StepExecutionListenerContextSupport}
-	 * 
-	 * @param stepExecution
-	 */
-	void restoreContext(StepExecution stepExecution);
-
-	/**
-	 * Remove the context information when the step ends This method is called by
-	 * the Step listener {@link StepExecutionListenerContextSupport}
-	 * 
-	 * @param stepExecution
-	 */
-	void clearContext(StepExecution stepExecution);
+	void clearContext(JobExecution jobExecution);
 
 }

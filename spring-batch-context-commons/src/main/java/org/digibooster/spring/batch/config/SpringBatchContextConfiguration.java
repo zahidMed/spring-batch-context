@@ -5,9 +5,7 @@ import java.util.List;
 import org.digibooster.spring.batch.aop.JobExecutionAspect;
 import org.digibooster.spring.batch.listener.JobExecutionContextListener;
 import org.digibooster.spring.batch.listener.JobExecutionListenerContextSupport;
-import org.digibooster.spring.batch.listener.StepExecutionListenerContextSupport;
 import org.springframework.batch.core.job.AbstractJob;
-import org.springframework.batch.core.step.AbstractStep;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -33,11 +31,6 @@ public class SpringBatchContextConfiguration {
 		return new JobExecutionListenerContextSupport(jobExecutionContextListeners);
 	}
 
-	@Bean
-	public StepExecutionListenerContextSupport stepExecutionListenerContextSupport(
-			@Autowired List<JobExecutionContextListener> jobExecutionContextListeners) {
-		return new StepExecutionListenerContextSupport(jobExecutionContextListeners);
-	}
 
 	/**
 	 * Bean pre-processing that registers job and step listener for the created job
@@ -45,21 +38,17 @@ public class SpringBatchContextConfiguration {
 	 * {@link JobExecutionAspect}
 	 * 
 	 * @param jobExecutionListener
-	 * @param stepExecutionListenerContextSupport
 	 * @return
 	 */
 	@Bean
-	public BeanPostProcessor jobPostProcessor(@Autowired final JobExecutionListenerContextSupport jobExecutionListener,
-			@Autowired final StepExecutionListenerContextSupport stepExecutionListenerContextSupport) {
+	public BeanPostProcessor jobPostProcessor(@Autowired final JobExecutionListenerContextSupport jobExecutionListener) {
 		return new BeanPostProcessor() {
 
+			@Override
 			public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 				if (bean instanceof AbstractJob) {
 					AbstractJob job = (AbstractJob) bean;
 					job.registerJobExecutionListener(jobExecutionListener);
-				} else if (bean instanceof AbstractStep) {
-					AbstractStep step = (AbstractStep) bean;
-					step.registerStepExecutionListener(stepExecutionListenerContextSupport);
 				}
 				return bean;
 			}

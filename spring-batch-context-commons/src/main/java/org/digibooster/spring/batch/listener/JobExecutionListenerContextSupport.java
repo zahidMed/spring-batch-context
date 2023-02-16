@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -14,6 +16,8 @@ import org.springframework.util.CollectionUtils;
  * @author Mohammed ZAHID {@literal <}zahid.med@gmail.com{@literal >}
  *
  */
+
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class JobExecutionListenerContextSupport implements JobExecutionListener {
 
 	protected List<JobExecutionContextListener> jobExecutionContextListeners;
@@ -27,7 +31,7 @@ public class JobExecutionListenerContextSupport implements JobExecutionListener 
 		if (!CollectionUtils.isEmpty(jobExecutionContextListeners)) {
 			Iterator<JobExecutionContextListener> iter = jobExecutionContextListeners.iterator();
 			while (iter.hasNext()) {
-				iter.next().fillJobExecutionContext(jobExecution);
+				iter.next().restoreContext(jobExecution);
 			}
 		}
 
@@ -38,9 +42,11 @@ public class JobExecutionListenerContextSupport implements JobExecutionListener 
 		if (!CollectionUtils.isEmpty(jobExecutionContextListeners)) {
 			Iterator<JobExecutionContextListener> iter = jobExecutionContextListeners.iterator();
 			while (iter.hasNext()) {
-				iter.next().removeFromJobExecutionContext(jobExecution);
+				iter.next().clearContext(jobExecution);
 			}
 		}
+
+
 
 	}
 

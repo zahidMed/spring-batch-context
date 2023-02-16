@@ -5,7 +5,7 @@
 	<groupId>org.digibooster.spring.batch</groupId>
 	<artifactId>spring-batch-context</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<name>spring-batch-context</name>
 	<url>https://github.com/zahidMed/spring-batch-context</url>
 	<description>
@@ -32,13 +32,14 @@
 	<properties>
 
 		<spring-batch.version>4.0.0.RELEASE</spring-batch.version>
-		<spring-framework.version>5.0.0.RELEASE</spring-framework.version>
+		<spring-framework.version>5.2.22.RELEASE</spring-framework.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<aspectjweaver.version>1.8.9</aspectjweaver.version>
-		<junit.version>4.12</junit.version>
-		<maven.compiler.target>1.7</maven.compiler.target>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<java.version>1.7</java.version>
+		<junit.version>4.13.2</junit.version>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
+		<java.version>1.8</java.version>
 	</properties>
 
 	<modules>
@@ -47,7 +48,7 @@
 		<module>spring-batch-sleuth</module>
 		<module>spring-batch-mdc</module>
 		<module>spring-batch-locale</module>
-	</modules>
+    </modules>
 
 	<dependencyManagement>
 		<dependencies>
@@ -58,12 +59,22 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring-framework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
 				<version>${spring-framework.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-aop</artifactId>
+				<version>${spring-framework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
 				<version>${spring-framework.version}</version>
 			</dependency>
 			<dependency>
@@ -96,17 +107,20 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
+				<version>3.4.1</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -115,6 +129,14 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<runOrder>alphabetical</runOrder>
+				</configuration>
 			</plugin>
 
 		</plugins>

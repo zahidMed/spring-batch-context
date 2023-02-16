@@ -1,6 +1,7 @@
 package org.digibooster.spring.batch.util;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.batch.core.JobParameter;
@@ -24,6 +25,20 @@ public class SerializableJobParameter<T extends Serializable> extends JobParamet
 	public SerializableJobParameter(T value) {
 		super(UUID.randomUUID().toString());
 		this.value = value;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+		SerializableJobParameter<?> that = (SerializableJobParameter<?>) o;
+		return Objects.equals(value, that.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), value);
 	}
 
 	@Override

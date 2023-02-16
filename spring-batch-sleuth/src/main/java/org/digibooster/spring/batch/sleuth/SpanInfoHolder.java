@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.cloud.sleuth.Span;
 
@@ -106,5 +107,18 @@ public class SpanInfoHolder implements Serializable {
 
 	public void setBaggage(Map<String, String> baggage) {
 		this.baggage = baggage;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		SpanInfoHolder that = (SpanInfoHolder) o;
+		return traceIdHigh == that.traceIdHigh && traceId == that.traceId && spanId == that.spanId && remote == that.remote && exportable == that.exportable && Objects.equals(name, that.name) && Objects.equals(parents, that.parents) && Objects.equals(tags, that.tags) && Objects.equals(processId, that.processId) && Objects.equals(baggage, that.baggage);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, traceIdHigh, traceId, parents, spanId, remote, exportable, tags, processId, baggage);
 	}
 }

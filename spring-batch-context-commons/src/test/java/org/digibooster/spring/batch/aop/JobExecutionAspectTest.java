@@ -1,42 +1,39 @@
 package org.digibooster.spring.batch.aop;
 
-import org.digibooster.spring.batch.config.TestConfiguration;
+
+import org.digibooster.spring.batch.listener.JobExecutionContextListener;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.junit.runner.RunWith;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.springframework.aop.framework.AopProxy;
 import org.springframework.aop.framework.DefaultAopProxyFactory;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = { TestConfiguration.class })
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class })
-@TestPropertySource(locations = "classpath:application.properties")
+import java.util.Arrays;
+
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class })
+@TestExecutionListeners(DirtiesContextTestExecutionListener.class)
 public class JobExecutionAspectTest {
 
 	JobLauncher aspectJobLauncher;
 
 	TestJobLauncher jobLauncher = new TestJobLauncher();
 
-	@Autowired
-	JobExecutionAspect jobExecutionAspect;
+	JobExecutionAspect jobExecutionAspect = new JobExecutionAspect(Arrays.asList((JobExecutionContextListener)new JobExecutionContextListenerTest()));
 
 	@Before
 	public void setUp() {
@@ -65,6 +62,7 @@ public class JobExecutionAspectTest {
 		Assert.assertEquals(expectedParametersBuilder.toJobParameters(), jobLauncher.getJobParameters());
 	}
 
+
 	public static class TestJobLauncher implements JobLauncher {
 
 		private JobParameters jobParameters;
@@ -79,6 +77,28 @@ public class JobExecutionAspectTest {
 			this.jobParameters = jobParameters;
 			return null;
 		}
+	}
+
+	public static class JobExecutionContextListenerTest implements JobExecutionContextListener {
+
+		@Override
+		public void insertContextInfo(JobParametersBuilder jobParametersBuilder) {
+			jobParametersBuilder.addString("Param1", "textParam1");
+			jobParametersBuilder.addLong("Param2", 12L);
+		}
+
+
+		@Override
+		public void restoreContext(JobExecution jobExecution) {
+
+		}
+
+
+		@Override
+		public void clearContext(JobExecution stepExecution) {
+
+		}
+
 	}
 
 }
