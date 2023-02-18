@@ -1,71 +1,70 @@
 # Welcom to spring-batch-context
 
-The aim of this library is to allow developers who use spring-batch to propagate information from the main thread that runs the batch to the executions context of the batch items : ItemReader, ItemProcessor and ItemWriter.
+The aim of this library is to allow developers who use spring-batch to propagate information from the main thread that runs the batch (where JobLauncher is called) to the executions context of the batch items (ItemReader, ItemProcessor and ItemWriter) including the execution listeners (JobsExecutionListener and stepExecutionListener).
 For example we some times need to extract the current user from Security Context, so instead of writing the code that passes the current user information as a job parameter we let this library to handle it.
 This library can be extended to support any information developer want to add.
 
-The integration of this library require a simple configuration during the job definition (see Code example)
+The integration of this library require a simple configuration during the job definition (see Configuration paragraph)
 
-# What is new in the version 1.1.0
-This version supports multi-threaded step, multi-process, parallel steps and flow by using customized task executors (similar to simple and pool task executors)
+# What is new in the version 1.1.0-RELEASE
+This version supports multi-threaded step, multi-process, parallel steps and flow by using customized task executors that inherit from `SimpleAsyncTaskExecutor` and `ThreadPoolTaskExecutor`
 
 # Modules
-This Project includes the modules described bellow. All those modules have starters so just add them to the pom.xml in order to have them working
+This Project includes the modules described bellow.
 
-## spring-batch-security
-This module is used to propagate the spring security context throw the batch Items
-
+**Remark**: Unlike the version 1.0.0, this one doesn't include spring-batch and spring boot dependencies so developer should add his own ones.
+## Spring Security context propagation
 ### Usage
+To propagate Spring Security context (Authentication) inside the Job items and listeners , you need to add `spring-batch-security` as a dependency to your Spring based application, as shown in the following example for Maven:
 ```xml
 <dependency>
 	<groupId>org.digibooster.spring.batch</groupId>
 	<artifactId>spring-batch-security</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.0-RELEASE</version>
 </dependency>
 ```
 
-## spring-batch-mdc
-This module is used to propagate values stored in Slf4j's MDC context throw the batch Items
-##### Usage
+## MDC Context Map propagation
+### Usage
+To propagate Slf4j's MDC context inside the Job items and listeners , you need to add `spring-batch-mdc` as a dependency to your Spring based application, as shown in the following example for Maven:
 ```xml
 <dependency>
 	<groupId>org.digibooster.spring.batch</groupId>
 	<artifactId>spring-batch-mdc</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.0-RELEASE</version>
 </dependency>
 ```
 
-## spring-batch-sleuth
-This module is used to propagate sleuth Span information throw the batch Items
-##### Usage
+## Sleuth Span Information propagation
+### Usage
+To propagate Sleuth Span information context (TraceId, SpanId, Parents, Tags ...) inside the Job items and listeners , you need to add `spring-batch-sleuth` as a dependency to your Spring based application, as shown in the following example for Maven:
 ```xml
 <dependency>
 	<groupId>org.digibooster.spring.batch</groupId>
 	<artifactId>spring-batch-sleuth</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.0-RELEASE</version>
 </dependency>
 ```
 
-## spring-batch-locale
-This module is used to propagate the locale context throw the batch Items
-##### Usage
+## Locale propatation (Internationalization)
+### Usage
+To propagate internationalization context (Locale) inside the Job items and listeners , you need to add `spring-batch-locale` as a dependency to your Spring based application, as shown in the following example for Maven:
 ```xml
 <dependency>
 	<groupId>org.digibooster.spring.batch</groupId>
 	<artifactId>spring-batch-locale</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.0-RELEASE</version>
 </dependency>
 ```
 
-## Customised task executors
-In order to run the jobs asynchronously with parallel processing, we should use one of the following task executors:
+# Configuration
+In order to run jobs asynchronously with parallel processing with context propagation, you need use one of the following task executors:
 - ContextBasedSimpleAsyncTaskExecutor: inherits `SimpleAsyncTaskExecutor` with context propagation support.
 - ContextBasedThreadPoolTaskExecutor: inherits `ThreadPoolTaskExecutor` with context propagation support.
 
-### Code example
-#### Task executors configuration
+## Configuration example
+### Task executors configuration
 ```java
-
 /**
  * Bean example for creating a simple task executor
  * The task listener beans are created automatically by the starter
@@ -86,7 +85,7 @@ public TaskExecutor threadpoolTaskExecutor(@Autowired List<TaskExecutorListener>
 
 ```
 
-#### Example of job launcher configuration
+### Job launcher configuration
 
 ````java
 /**
@@ -96,13 +95,13 @@ public TaskExecutor threadpoolTaskExecutor(@Autowired List<TaskExecutorListener>
 public JobLauncher jobLauncher(@Autowired JobRepository jobRepository, TaskExecutor simpleTaskExecutor) throws Exception {
     SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
     jobLauncher.setJobRepository(jobRepository);
-    jobLauncher.setTaskExecutor(simpleTaskExecutor);// configuration of simple task executor for runing the job asynchronously
+    jobLauncher.setTaskExecutor(simpleTaskExecutor);// configuration of simple task executor for running the job asynchronously
     jobLauncher.afterPropertiesSet();
     return jobLauncher;
 }
 ````
 
-#### Example of step configuration
+### Step configuration
 
 ````java
 /**
@@ -120,7 +119,7 @@ public Step step(@Autowired TaskExecutor threadpoolTaskExecutor) {
 }
 ````
 
-#### Example of flow configuration
+### Example of flow configuration
 
 ````java
 /**
@@ -135,5 +134,3 @@ public Flow splitFlow(@Autowired TaskExecutor threadpoolTaskExecutor) {
     .build();
 }
 ````
-
-**Remark**: Unlike the version 1.0.0, this version doesn't include spring-batch and spring boot dependencies so developer should add his own ones.
